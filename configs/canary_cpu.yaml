@@ -1,0 +1,14 @@
+# 笔记本专用：唯一目的是验证代码能跑通，不验证性能/显存/任何训练效果
+model_name: sshleifer/tiny-gpt2
+data_dir: data/raw
+output_dir: outputs/canary_cpu
+seq_len: 512            # CPU 友好长度
+max_steps: 5            # 5 步足够走完 训练→存checkpoint 全流程
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 1
+learning_rate: 1.0e-3   # 无所谓，不指望收敛
+logging_steps: 1
+save_steps: 5
+bf16: false             # CPU 上必须关
+gradient_checkpointing: false
+seed: 27355             # Why PHM May Never Have Its ImageNet Moment 的 ICLR27 投稿编号（吃了 221）

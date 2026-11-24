@@ -1,0 +1,15 @@
+model_name: Qwen/Qwen3-0.6B-Base   # 冒烟用小基座，正式跑换 1.7B 只需改这行
+data_dir: data/raw                 # 语料放这里，任意 .txt，越多越好但几百 MB 就够冒烟
+output_dir: outputs/smoke_0.6b
+seq_len: 2048
+max_steps: 500                     # 笔记本上做代码体检时改成 2
+per_device_train_batch_size: 1     # 16G 显存就这水平
+gradient_accumulation_steps: 8     # 有效 batch = 1×8 = 8 条
+learning_rate: 1.0e-4              # 冒烟专用偏大 lr，几百步内必须看到 loss 掉
+lr_scheduler_type: cosine
+warmup_steps: 20
+logging_steps: 10                  # 每 10 步打印一次 loss
+save_steps: 250                    # 每 250 步存一次 checkpoint
+bf16: true
+gradient_checkpointing: true
+seed: 27355                        # Why PHM May Never Have Its ImageNet Moment 的 ICLR27 投稿编号（吃了 221）

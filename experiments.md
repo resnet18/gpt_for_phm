@@ -1,0 +1,2 @@
+## 2026-11-25
+- canary @笔记本CPU | config: canary_cpu.yaml (sshleifer/tiny-gpt2, seed 27355) | 5 步 / 1.1s | loss 10.8 ≈ ln(50257)=均匀预测基线，5 步 warmup 内预期内 | grad_norm 非零且波动，梯度流通 | 产物 outputs/canary_cpu/final | 结论：代码机制 e2e 通过；loss 是否真降属 5060Ti 冒烟指标，本测试不作要求
