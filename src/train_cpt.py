@@ -7,7 +7,7 @@ from src.model import load_model_and_tokenizer
 
 def build_targs(cfg):
     """组装 TrainingArguments——train_cpt 与 train_sft 共用，保证两管线训练超参永不漂移。"""
-    return TrainingArguments(
+    common = dict(
         output_dir=cfg["output_dir"],
         max_steps=cfg["max_steps"],
         per_device_train_batch_size=cfg["per_device_train_batch_size"],
@@ -19,11 +19,24 @@ def build_targs(cfg):
         save_steps=cfg.get("save_steps", 250),
         save_total_limit=2,
         bf16=cfg.get("bf16", True),
-        gradient_checkpointing=cfg.get("gradient_checkpointing", True),
-        gradient_checkpointing_kwargs={"use_reentrant": False},
         report_to=[],
         seed=cfg.get("seed", 27355),
     )
+    ckpt = cfg.get("gradient_checkpointing", True)
+    # 参数改名自适应：新 transformers 用 activation_checkpointing，老版本回退旧名；
+    # 等 transformers v6 移除旧名后，except 分支自然变成死代码再删。
+    try:
+        return TrainingArguments(
+            **common,
+            activation_checkpointing=ckpt,
+            activation_checkpointing_kwargs={"use_reentrant": False},
+        )
+    except TypeError:
+        return TrainingArguments(
+            **common,
+            gradient_checkpointing=ckpt,
+            gradient_checkpointing_kwargs={"use_reentrant": False},
+        )
 
 def train_core(model, tokenizer, dataset, cfg):
     """训练循环本体：任一管线（CPT/SFT）建完数据后都从这里进。"""
