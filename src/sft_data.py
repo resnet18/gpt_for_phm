@@ -31,6 +31,7 @@ def load_sft_dataset(cfg, tokenizer):
         if n > seq_len:
             continue
         # 防静默失效断言：prompt 段必须全被掩码，completion 段（含 EOS）必须一个都不被掩。
+        # 掩码写反/错位时 loss 照样下降，这两条断言是唯一会当场叫的东西。
         labels = [-100] * len(p_ids) + c_ids
         assert all(x == -100 for x in labels[:len(p_ids)]), "prompt 未完整掩码"
         assert not any(x == -100 for x in labels[len(p_ids):]), "completion 被误掩"

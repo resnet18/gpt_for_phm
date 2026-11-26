@@ -1,3 +1,5 @@
+"""决策格式 SFT 入口：prompt/completion jsonl → completion-only 掩码 → 共用训练核心。"""
+
 import argparse
 import yaml
 
