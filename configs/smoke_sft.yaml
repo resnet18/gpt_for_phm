@@ -1,0 +1,15 @@
+# 5060Ti SFT 冒烟：0.6B + 决策格式玩具数据
+model_name: Qwen/Qwen3-0.6B-Base     # 昨天已缓存，不用再下载
+data_dir: data/sft
+output_dir: outputs/smoke_sft
+seq_len: 512
+max_steps: 20                          # 先看 loss 趋势，趋势对再决定要不要加
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 4       # 有效 batch = 8 = 一轮过完全部 8 条
+learning_rate: 2.0e-5                # SFT 的正经量级，不用 CPT 冒烟那种偏大的
+warmup_steps: 5
+logging_steps: 5
+save_steps: 20
+bf16: true
+gradient_checkpointing: true
+seed: 27355
