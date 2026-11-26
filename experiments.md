@@ -14,3 +14,10 @@
   - 格式抽查：待判样本续写输出"决策：香蕉。置信度：0.95。&lt;|endoftext|&gt;"——格式成立、EOS 终止生效；决策内容错（8 条记忆检索）属预期，不考核
   - 关键修复：completion 末尾必须拼 eos_token_id，否则推理复读尾词（sft_data.py，已入 README 格式宪法）；变长样本三填充（input_ids=pad / labels=-100 / attention_mask）
   - 环境备注：transformers 新版将 gradient_checkpointing 改名为 activation_checkpointing，train_cpt.py 用 try/except 自适应新旧版本
+
+## 2026-11-26
+- OCR canary @笔记本 CPU | scripts/ocr_one.py v3（rapidocr-onnxruntime + 栏沟重排）| 样本：基于PHM的雷达装备维修保障研究_王晗中.pdf（扫描版，4 页双栏）| 产出 6831 字符 -&gt; data/processed/ | 结论：条件通过，可开批量
+  - 验收：正文双栏栏序正确、跨栏句子接缝完好（"……部件的剩余"→"寿命；最后……"）、参考文献有序、识别错误率约 2–5%（可容忍）
+  - 迭代记录：v1 按行横扫→正文栏序碎；v2 按框宽判通栏→正文修好但首页摘要区碎；v3 栏沟判据→正文/参考文献全对
+  - 已知残余：首页"通栏+双栏"混合版面的块序乱（标题/摘要块顺序），判定对 CPT 无害（内容零丢失、正文占比 90%+），正式修复挂 VLM 档
+  - 教训：rapidocr 返回项为 [框, 文本, 置信度] 三元组，只能索引取值不能解包
